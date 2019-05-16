@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/noderest', { useMongoClient: true });
+const uri =  process.env.MONGODB_URI || 'mongodb://localhost/noderest';
+
+mongoose.connect(uri, { useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 module.exports = mongoose;

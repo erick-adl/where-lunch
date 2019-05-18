@@ -16,6 +16,11 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         select:false,
+    },    
+    lastDayVote:{
+        type:String,
+        required:false,
+        default: null,
     },
     createAt:{
         type:Date,

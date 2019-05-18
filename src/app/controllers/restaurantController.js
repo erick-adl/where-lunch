@@ -1,8 +1,9 @@
 const express = require('express');
+const dateFormat = require('dateformat');
 const authMiddleware = require('../middlewares/auth');
 
-const Restaurant = require('../models/Restaurant');
-const Task = require('../models/Restaurant');
+const Restaurant = require('../models/restaurant');
+const User = require('../models/user');
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ router.put('/:restaurantId', async (req, res) => {
         const restaurant = await Restaurant.findByIdAndUpdate(req.params.restaurantId, {
             title,
             description
-        }, { new: true });       
+        }, { new: true });
 
         await restaurant.save();
 
@@ -58,9 +59,34 @@ router.delete('/:restaurantId', async (req, res) => {
     try {
         await Restaurant.findByIdAndRemove(req.params.restaurantId);
 
-        return res.send({success:'Restaurant deleted'});
+        return res.send({ success: 'Restaurant deleted' });
     } catch (err) {
         return res.status(400).send({ error: 'Error deleting restaurant' });
+    }
+});
+
+router.put('/:restaurantId/vote', async (req, res) => {
+    try {
+        
+        const restaurant = await Restaurant.findById(req.params.restaurantId);
+        if (!restaurant) {
+            return res.status(400).send({ error: 'Restaurant not found' });
+        }
+        
+        const user = await User.findById(req.userId);
+        if (user.lastDayVote == dateFormat(new Date(), "dd-mm-yyyy")) {
+            return res.status(400).send({ error: 'User already vote today' });
+        }
+        
+        await User.findByIdAndUpdate(req.userId, {
+            lastDayVote: dateFormat(new Date(), "dd-mm-yyyy")
+        });
+
+        restaurant.votes++;
+        await restaurant.save();
+        return res.send({ restaurant });
+    } catch (err) {
+        return res.status(400).send({ error: 'Error voting restaurant' });
     }
 });
 

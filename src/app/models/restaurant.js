@@ -14,20 +14,16 @@ const RestaurantSchema = new mongoose.Schema({
     type: Number,
     require: false,
     default: 0,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    require: true,
-  },
+  },  
   canVote: {
     type: Boolean,
     required: false,
     select: true,
+    default: true,
   },
   lastSelectedDay: {
-    type: String,
-    required: false,
+    type: Date,
+    default: null,
   },
   createdAt: {
     type: Date,
